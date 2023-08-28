@@ -1,64 +1,18 @@
 import { faker } from 'https://cdn.skypack.dev/@faker-js/faker';
+import { AGE_CERTIFICATIONS, GENRES } from '../constants';
 
 export const generateTitles = (entries = 150) => {
   const titles = [];
 
   for (let index = 0; index < entries; index++) {
     const title = {
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       title: faker.music.songName(),
       description: faker.lorem.paragraph(),
       release_year: faker.date.past({ years: 50 }).getFullYear(),
-      age_certification: faker.helpers.arrayElement([
-        '12',
-        '12A',
-        '15',
-        '18',
-        '18R',
-        '6',
-        '9',
-        'A',
-        'AL',
-        'C',
-        'CA',
-        'E',
-        'E10+',
-        'EC',
-        'G',
-        'GP',
-        'M',
-        'M/PG',
-        'MA15+',
-        'NC-17',
-        'PG-13',
-        'PG',
-        'R',
-        'R16',
-        'R18',
-        'R18+',
-        'R21',
-        'S',
-        'T',
-        'TV-14',
-        'TV-G',
-        'TV-MA',
-        'TV-PG',
-        'TV-Y',
-        'TV-Y7',
-        'U',
-        'U/A',
-        'X18',
-      ]),
+      age_certification: faker.helpers.arrayElement(AGE_CERTIFICATIONS),
       runtime: faker.number.int({ min: 10, max: 180 }),
-      genres: faker.helpers.arrayElement([
-        'Action',
-        'Comedy',
-        'Drama',
-        'Fantasy',
-        'Horror',
-        'Thriller',
-        'Western',
-      ]),
+      genres: faker.helpers.arrayElement(GENRES),
       production_country: faker.location.countryCode('alpha-3'),
       seasons: faker.helpers.arrayElement([
         faker.number.int({ min: 1, max: 5 }),
@@ -66,7 +20,46 @@ export const generateTitles = (entries = 150) => {
       ]),
     };
 
-    titles.push(title);
+    const invalidTitle = faker.helpers.maybe(
+      () => ({
+        id: faker.helpers.arrayElement([
+          faker.date.past({ years: 50 }).getFullYear(),
+          null,
+        ]),
+        title: faker.helpers.arrayElement([
+          faker.date.past({ years: 50 }),
+          null,
+        ]),
+        description: faker.lorem.paragraph(),
+        release_year: faker.helpers.arrayElement([
+          faker.helpers.arrayElement(AGE_CERTIFICATIONS),
+          null,
+        ]),
+        age_certification: faker.helpers.arrayElement([
+          faker.helpers.arrayElement(AGE_CERTIFICATIONS),
+          null,
+        ]),
+        runtime: faker.helpers.arrayElement([
+          faker.date.past({ years: 50 }).getFullYear(),
+          null,
+        ]),
+        genres: faker.helpers.arrayElement([
+          faker.number.int({ min: 10, max: 180 }),
+          null,
+        ]),
+        production_country: faker.helpers.arrayElement([
+          faker.helpers.arrayElement(GENRES),
+          null,
+        ]),
+        seasons: faker.helpers.arrayElement([
+          faker.location.countryCode('alpha-3'),
+          null,
+        ]),
+      }),
+      { probability: 0.1 },
+    );
+
+    titles.push(invalidTitle || title);
   }
 
   return titles;
