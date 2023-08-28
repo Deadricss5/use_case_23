@@ -2,10 +2,12 @@ import React from 'react';
 
 import './App.css';
 
+import { GenerateData } from './components';
+
 function App() {
   return (
     <div className="container">
-      <h1>use case 23</h1>
+      <GenerateData />
     </div>
   );
 }
